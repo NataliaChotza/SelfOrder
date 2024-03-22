@@ -2,7 +2,6 @@ package com.example.mgr;
 
 
 import com.example.mgr.controllers.MainPageController;
-import com.example.mgr.mdbsrping.repository.ItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;

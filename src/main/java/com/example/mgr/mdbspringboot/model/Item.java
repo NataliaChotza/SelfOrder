@@ -1,43 +1,13 @@
 package com.example.mgr.mdbspringboot.model;
 
 
+import lombok.Data;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 
 @Document("item")
+@Data
 public class Item {
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescrption() {
-        return descrption;
-    }
-
-    public void setDescrption(String descrption) {
-        this.descrption = descrption;
-    }
-
-    public String getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(String quantity) {
-        this.quantity = quantity;
-    }
-
-    public CategoryEnum getCategory() {
-        return category;
-    }
-
-    public void setCategory(CategoryEnum category) {
-        this.category = category;
-    }
-
     private String name;
     private String descrption;
     private String quantity;
