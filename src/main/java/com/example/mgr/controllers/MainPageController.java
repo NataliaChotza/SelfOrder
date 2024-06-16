@@ -4,12 +4,17 @@ import com.example.mgr.mdbspringboot.model.CategoryEnum;
 import com.example.mgr.mdbspringboot.model.Item;
 import com.example.mgr.mdbsrping.repository.ItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@Controller
-
+@RestController
+@RequestMapping("/api")
 public class MainPageController {
 
     @Autowired
@@ -21,18 +26,23 @@ public class MainPageController {
 
     }
 
-    public List<Item> showAllItems() {
-        return menuItemRepo.findAll();
+    @GetMapping("/items")
+    public List<Item> getAllItems() {
+        createItem();
+        return getMenuItemRepo().findAll();
     }
 
     public void getItemByName(String name) {
-        Item item = menuItemRepo.findItemByName(name);
+        Item item = getMenuItemRepo().findItemByName(name);
         System.out.println(getItemDetails(item));
     }
 
     public String getItemDetails(Item item) {
-        System.out.println(item.getName() + " " + item.getDescrption() + " " + item.getQuantity() + " " + item.getCategory());
+        System.out.println(item.getName() + " " + item.getDescription() + " " + item.getQuantity() + " " + item.getCategory());
         return "";
+    }
+    public ItemRepository getMenuItemRepo() {
+        return menuItemRepo;
     }
 }
 //}

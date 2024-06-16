@@ -9,15 +9,15 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Data
 public class Item {
     private String name;
-    private String descrption;
+    private String description;
     private String quantity;
     private CategoryEnum category;
 
-    public Item(String name, String descrption, String quantity, CategoryEnum category){
+    public Item(String name, String description, String quantity, CategoryEnum category){
         super();
         this.name=name;
         this.quantity=quantity;
-        this.descrption=descrption;
+        this.description=description;
         this.category = category;
     }
 }
