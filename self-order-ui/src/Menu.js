@@ -1,40 +1,45 @@
 // src/Menu.js
-import React, {Component} from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPizzaSlice, faHamburger, faIceCream, faCoffee } from '@fortawesome/free-solid-svg-icons';
-import { useNavigate } from 'react-router-dom';
-import { useItemProvider } from './ItemProvider';
+import React, {useEffect, useState} from 'react';
+import {useNavigate} from 'react-router-dom';
+import axios from 'axios';
 import './Menu.css';
-import Item from "./Item";
-class Menu extends Component{
-    state ={
-        items:[]
-    }
-    async componentDidMount(){
-        const response  = await fetch('/items')
-        const body = await response.json();
-        this.setState({items:body});
-    }
-    render(){
-        const {items} = this.state;
-        return(
-            <body className="body">
-            <div className="menu">
-                <h1>Restaurant Menu</h1>
-                <div className="menu-items">
-                    {items.map(item=>
-                        <Item>
-                        <div key={item.id}>
-                            <p>{item.name}</p>
-                        </div>
-                        </Item>)
-                        }
 
-                </div>
-            </div>
-            </body>
-        )
+const Menu = () => {
+    const [items, setItems] = useState([]);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        axios.get('/api/items')
+            .then(response => {
+                console.log('Data fetched:', response.data);  // Debugging log
+                setItems(response.data);
+            })
+            .catch(error => {
+                console.error('Error while getting items', error);
+            });
+    }, []);
+
+    const handleItemClick = (itemId) => {
+        navigate(`/api/items/${itemId}`)
     }
-}
+
+    return (
+        <div className="body">
+            <div className="menu">
+                <h1>Self Order Menu</h1>
+                <ul>
+                    {items.map(item => (
+                        <li key={item.id} onClick={() => handleItemClick(item.id)}>
+                            <div className="item" key={item.id}>
+                                <p>{item.name}</p>
+                                <p>{item.description}</p>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        </div>
+    );
+};
 
 export default Menu;

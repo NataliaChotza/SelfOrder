@@ -1,15 +1,21 @@
-import React from "react"
+import React, {useEffect, useState} from "react"
 import { useNavigate } from 'react-router-dom';
-import { useLocation } from 'react-router-dom';
-
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import './Item.css';
+import axios from "axios";
 
 function Item(){
     const navigate = useNavigate();
-    const location = useLocation();
-
-    const { description, clickedIcon, clickedName } = location.state || {};
+    const [item, setItem] = useState([]);
+    useEffect(() => {
+        axios.get(`/api/items/${item.id}`)
+            .then(response => {
+                console.log('Data fetched:', response.data);  // Debugging log
+                setItem(response.data);
+            })
+            .catch(error => {
+                console.error('Error while getting item', error);
+            });
+    }, []);
     const handleBackClick = () => {
     navigate(-1); // This navigates to the previous page
   };
@@ -18,10 +24,10 @@ function Item(){
       <body className="body">
         <div className="item">
           <h1>Item Name</h1>
-          {clickedIcon && <FontAwesomeIcon icon={clickedIcon} size="3x" />}
+            {item.name && <p>{item.name}</p>}
         </div>
         <div className="description-box">
-            {description && <p>{description}</p>}
+            {item.description && <p>{item.description}</p>}
         </div>
         <div>
           <button className="button-back" onClick={handleBackClick}>Go Back</button>

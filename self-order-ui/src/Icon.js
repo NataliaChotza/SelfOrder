@@ -1,6 +1,5 @@
 // src/Icon.js
 import React from 'react';
-import { useItemProvider } from './ItemProvider';
 
 function Icon({ iconData }) {
   const { setClickedIcon } = useItemProvider();
