@@ -21,3 +21,85 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+# Ignore node_modules for React
+node_modules/
+
+# Ignore build directories for React
+build/
+dist/
+
+# Ignore .env files for environment variables in React
+.env
+lerna-debug.log*
+
+# Ignore the coverage directory for tests in React
+coverage/
+
+# Ignore .cache directory created by tools like Gatsby
+.cache/
+
+# Ignore Spring Boot specific files and directories
+target/
+bin/
+out/
+
+# Ignore IDE specific files
+.idea/
+*.iml
+*.iws
+*.swp
+
+# Ignore Eclipse project files
+.project
+.classpath
+.settings/
+
+# Ignore VS Code project files
+.vscode/
+
+# Ignore log files
+*.log
+
+# Ignore build directories for Maven
+/target/
+/pom.xml.tag
+/pom.xml.releaseBackup
+/pom.xml.versionsBackup
+/pom.xml.next
+/release.properties
+
+# Ignore build directories for Gradle
+/.gradle/
+/build/
+
+# Ignore local environment configuration for Spring Boot
+*.env
+*.local
+
+# Ignore temporary files
+*.tmp
+
+# Ignore build directories
+.build/
+
+# Ignore spring-boot-devtools file modifications
+spring-boot-devtools.properties
+
+# Ignore specific spring configuration files
+*.yml
+*.yaml
+
+# Ignore specific spring configuration backup files
+*.yml.bak
+*.yaml.bak
+*.bak
+
+# Ignore Windows file system specific temporary files
+Thumbs.db
+desktop.ini
+
+# Ignore log directory
+/log/
+
+# Ignore test output directory
+/test-output/
