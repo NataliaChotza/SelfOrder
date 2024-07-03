@@ -3,13 +3,12 @@ import React, {useEffect, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import axios from 'axios';
 import './Menu.css';
-
 const Menu = () => {
     const [items, setItems] = useState([]);
     const navigate = useNavigate();
 
     useEffect(() => {
-        axios.get('/api/items')
+        axios.get(`http://localhost:8080/api/items`)
             .then(response => {
                 console.log('Data fetched:', response.data);  // Debugging log
                 setItems(response.data);
@@ -20,7 +19,7 @@ const Menu = () => {
     }, []);
 
     const handleItemClick = (itemId) => {
-        navigate(`/api/items/${itemId}`)
+        navigate(`/items/${itemId}`)
     }
 
     return (

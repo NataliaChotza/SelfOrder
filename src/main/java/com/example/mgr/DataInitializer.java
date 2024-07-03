@@ -3,7 +3,6 @@ package com.example.mgr;
 import com.example.mgr.mdbspringboot.model.CategoryEnum;
 import com.example.mgr.mdbspringboot.model.Item;
 import com.example.mgr.mdbsrping.repository.ItemRepository;
-import org.apache.commons.logging.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,16 +11,36 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class DataInitializer implements CommandLineRunner {
-
-    private static Logger logger = LoggerFactory.getLogger(DataInitializer.class);
+    private static final Logger logger = LoggerFactory.getLogger(DataInitializer.class);
     @Autowired
     private ItemRepository menuItemRepo;
     public void createItems() {
         logger.info("Initializing data...");
-        menuItemRepo.save(new Item("Backed chicken", "Chicken backed in the oven", "150g", CategoryEnum.MAIN_DISH));
-        menuItemRepo.save(new Item("Bread", "Freshly backed bread", "100g", CategoryEnum.APPETISER));
-        menuItemRepo.save(new Item("Water", "water", "500", CategoryEnum.DRINKS_NO_ALK));
 
+        Item item1 =Item.builder()
+                .id("item_1")
+                .name("Backed Chicken")
+                .description("Chicken backed in the oven")
+                .quantity("100g")
+                .category(CategoryEnum.MAIN_DISH)
+                .build();
+
+        Item item2= Item.builder()
+                .id("item_2")
+                .name("Bread")
+                .description("Freshly backed bread")
+                .quantity("100g")
+                .category(CategoryEnum.APPETISER).build();
+        Item item3 = Item.builder().id("item_3").name("Water")
+                .description("water")
+                .quantity("500")
+        .category(CategoryEnum.DRINKS_NO_ALK).build();
+
+        menuItemRepo.save(item1);
+        menuItemRepo.save(item2);
+        menuItemRepo.save(item3);
+
+        logger.info("Data Initialized");
     }
 
     @Override

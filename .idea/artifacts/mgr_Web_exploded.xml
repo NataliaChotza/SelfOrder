@@ -1,0 +1,13 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" name="mgr:Web exploded">
+    <output-path>$PROJECT_DIR$/out/artifacts/mgr_Web_exploded</output-path>
+    <root id="root">
+      <element id="javaee-facet-resources" facet="mgr/web/Web" />
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="mgr" />
+        </element>
+      </element>
+    </root>
+  </artifact>
+</component>

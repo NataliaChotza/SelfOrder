@@ -1,33 +1,34 @@
 package com.example.mgr.controllers;
 
-import com.example.mgr.mdbspringboot.model.CategoryEnum;
-import com.example.mgr.mdbspringboot.model.Item;
-import com.example.mgr.mdbsrping.repository.ItemRepository;
+import com.example.mgr.dto.ItemDto;
+import com.example.mgr.service.MenuService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
 public class MainPageController {
+    private static Logger logger = LoggerFactory.getLogger(MainPageController.class);
     @Autowired
-    private ItemRepository menuItemRepo;
+    private MenuService menuService;
+
 
     @GetMapping("/items")
-    public List<Item> getAllItems() {
-        System.out.println("send items to front");
-        return menuItemRepo.findAll();
+    public ResponseEntity<List<ItemDto>> getAllItems() {
+        List<ItemDto> items = menuService.getMenu();
+        if(items.isEmpty()){
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return ResponseEntity.ok(items);
     }
 
-    @GetMapping("/items/item/{itemId}")
-    public Item getItemById(@PathVariable String itemId) {
-        Optional<Item> item = menuItemRepo.findById(itemId);
-        return item.get();
-    }
+
 
 }
 //}
