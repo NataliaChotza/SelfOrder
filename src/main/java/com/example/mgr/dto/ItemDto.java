@@ -3,6 +3,7 @@ package com.example.mgr.dto;
 import com.example.mgr.mdbspringboot.model.CategoryEnum;
 import lombok.*;
 
+@Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor

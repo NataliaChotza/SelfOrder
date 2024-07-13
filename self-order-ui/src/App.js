@@ -1,9 +1,9 @@
 // src/App.js
 import React from 'react';
-import './App.css';
 import Menu from "./Menu";
 import {BrowserRouter, Routes, Route} from 'react-router-dom';
 import Item from "./Item";
+import Cart from "./Cart";
 
 const App = () => {
     return (
@@ -12,6 +12,7 @@ const App = () => {
                 <Route path='/' element={<Menu/>}></Route>
                 <Route path='/items' element={<Menu/>}></Route>
                 <Route path='/items/:itemId' element={<Item/>}></Route>
+                <Route path='/cart/:cartId' element={<Cart/>}></Route>
             </Routes>
         </BrowserRouter>
     )

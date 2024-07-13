@@ -10,8 +10,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document("item")
 @Data
-@Getter
-@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor

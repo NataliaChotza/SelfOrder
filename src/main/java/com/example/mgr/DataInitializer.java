@@ -1,7 +1,9 @@
 package com.example.mgr;
 
+import com.example.mgr.mdbspringboot.model.Cart;
 import com.example.mgr.mdbspringboot.model.CategoryEnum;
 import com.example.mgr.mdbspringboot.model.Item;
+import com.example.mgr.mdbsrping.repository.CartRepository;
 import com.example.mgr.mdbsrping.repository.ItemRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,11 +11,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+
 @Component
 public class DataInitializer implements CommandLineRunner {
     private static final Logger logger = LoggerFactory.getLogger(DataInitializer.class);
     @Autowired
     private ItemRepository menuItemRepo;
+    @Autowired
+    private CartRepository cartRepository;
     public void createItems() {
         logger.info("Initializing data...");
 
@@ -35,6 +41,10 @@ public class DataInitializer implements CommandLineRunner {
                 .description("water")
                 .quantity("500")
         .category(CategoryEnum.DRINKS_NO_ALK).build();
+
+
+        Cart cart = Cart.builder().id("cart1").items(new ArrayList<>()).build();
+        cartRepository.save(cart);
 
         menuItemRepo.save(item1);
         menuItemRepo.save(item2);
