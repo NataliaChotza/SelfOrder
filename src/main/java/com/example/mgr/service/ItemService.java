@@ -29,6 +29,8 @@ public class ItemService {
                 .name(item.getName())
                 .description(item.getDescription())
                 .quantity(item.getQuantity())
+                .price(item.getPrice())
+                .currency(item.getCurrency())
                 .category(item.getCategory())
                 .build();
     }

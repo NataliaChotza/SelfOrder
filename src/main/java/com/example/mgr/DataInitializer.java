@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
 @Component
@@ -20,27 +21,34 @@ public class DataInitializer implements CommandLineRunner {
     private ItemRepository menuItemRepo;
     @Autowired
     private CartRepository cartRepository;
+
     public void createItems() {
         logger.info("Initializing data...");
 
-        Item item1 =Item.builder()
+        Item item1 = Item.builder()
                 .id("item_1")
                 .name("Backed Chicken")
                 .description("Chicken backed in the oven")
                 .quantity("100g")
+                .price(new BigDecimal("35.99"))
+                .currency(PriceEnum.PLN.getValue())
                 .category(CategoryEnum.MAIN_DISH)
                 .build();
 
-        Item item2= Item.builder()
+        Item item2 = Item.builder()
                 .id("item_2")
                 .name("Bread")
                 .description("Freshly backed bread")
                 .quantity("100g")
+                .price(new BigDecimal("14.00"))
+                .currency(PriceEnum.PLN.getValue())
                 .category(CategoryEnum.APPETISER).build();
         Item item3 = Item.builder().id("item_3").name("Water")
                 .description("water")
                 .quantity("500")
-        .category(CategoryEnum.DRINKS_NO_ALK).build();
+                .price(new BigDecimal("6.99"))
+                .currency(PriceEnum.PLN.getValue())
+                .category(CategoryEnum.DRINKS_NO_ALK).build();
 
 
         Cart cart = Cart.builder().id("cart1").items(new ArrayList<>()).build();

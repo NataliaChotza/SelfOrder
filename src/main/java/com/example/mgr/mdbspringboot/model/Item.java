@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.math.BigDecimal;
 
 
 @Document("item")
@@ -22,6 +23,10 @@ public class Item {
     private String description;
     @NotNull
     private String quantity;
+    @NotNull
+    private BigDecimal price;
+    @NotNull
+    private String currency;
     @NotNull
     private CategoryEnum category;
 

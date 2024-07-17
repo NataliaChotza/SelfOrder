@@ -1,10 +1,10 @@
-// src/App.js
+
 import React from 'react';
-import Menu from "./Menu";
+
 import {BrowserRouter, Routes, Route} from 'react-router-dom';
 import Item from "./Item";
 import Cart from "./Cart";
-
+import Menu from "./Menu";
 const App = () => {
     return (
         <BrowserRouter>
