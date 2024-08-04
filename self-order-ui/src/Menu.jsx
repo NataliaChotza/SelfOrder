@@ -5,6 +5,7 @@ import axios from 'axios';
 import './Menu.css';
 import Navbar from "./components/Navbar";
 import MenuItems from "./Menus/MenuItems";
+import {useNavigate} from "react-router-dom";
 
 const Menu = () => {
     const [items, setItems] = useState([]);
@@ -27,7 +28,7 @@ const Menu = () => {
 
     return (
         <div
-            className="App"
+            className="body"
             css={css`
         background: #5E1833;
         height: 100%;
@@ -54,7 +55,7 @@ const Menu = () => {
             <Global
                 styles={css`
                   ::selection {
-                    background: #000;
+                    background:#F9E0D9;
                     color: #f0eff1;
                   }
 
@@ -71,17 +72,19 @@ const Menu = () => {
                   }
 
                   body::-webkit-scrollbar-track {
-                    background: #f0eff1; /* color of the tracking area */
+                    background:#F9E0D9; /* color of the tracking area */
                   }
 
                   body::-webkit-scrollbar-thumb {
-                    background-color: #5E1833; /* color of the scroll thumb */
+                    background-color:#F9E0D9; /* color of the scroll thumb */
                     border-radius: 20px; /* roundness of the scroll thumb */
-                    border: 3px solid #f0eff1; /* creates padding around scroll thumb */
+                    border: 3px solid #F9E0D9; /* creates padding around scroll thumb */
                   }
 
                   body {
-                    background: #f0eff1;
+                    background: #F9E0D9;
+                    justify-content: center;
+                    text-align: center;
                   }
 
                   .container {

@@ -4,43 +4,52 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCartPlus} from "@fortawesome/free-solid-svg-icons";
 import item from "../Item";
 import Item from "../Item";
+import axios from "axios";
 
-const MenuAppetisers = ({ appetisers, items }) => {
-const itemContainer = {
-    hidden: { y: 20, opacity: 0 },
-    visible: {
-        y: 0,
-        opacity: 1,
-    },
-};
-const navigate = useNavigate();
-const handleItemClick = (itemId) => {
-    return(<Item item={itemId} items={items}></Item>);
-}
+const MenuAppetisers = ({appetisers, items}) => {
+    const itemContainer = {
+        hidden: {y: 20, opacity: 0},
+        visible: {
+            y: 0,
+            opacity: 1,
+        },
+    };
+    const navigate = useNavigate();
+    const handleItemClick = (itemId) => {
+        navigate(`/api/items/${itemId}`)
+    }
 
-return (
-    <>
-        {appetisers &&
-            items
-                .filter((item) => item.category === "APPETISER")
-                .map((item, i) => (
-                <motion.div
-                    className="menu-items"
-                    key={item.id}
-                    onClick={handleItemClick(item.id)}
-                    variants={itemContainer}
-                    transition={{ delay: i * 0.2 }}
-                >
-                    <motion.div className="item-content">
-                        <motion.div className="item-title-box">
-                            <motion.h5 className="item-title">{item.name} <br/> {item.price} {item.currency} </motion.h5>
-                            <FontAwesomeIcon className="cart-icon" icon={faCartPlus}></FontAwesomeIcon>
+    const handleCartClick = (itemId) => {
+        const cartId = "cart1";//do zmiany
+        axios.post(`http://localhost:8080/api/cart/${cartId}/${itemId}`)
+            .then(response => console.log('Item saved to cart', itemId))
+            .catch(error => {
+                console.error('Error while saving item to cart', error)
+            });
+    }
+    return (
+        <>
+            {appetisers &&
+                items
+                    .filter((item) => item.category === "APPETISER")
+                    .map((item, i) => (
+                        <motion.div
+                            className="menu-items"
+                            key={item.id}
+                            variants={itemContainer}
+                            transition={{delay: i * 0.2}}
+                        >
+                            <motion.div className="item-content">
+                                <motion.div className="item-title-box">
+                                    <motion.h5 className="item-title" onClick={() => handleItemClick(item.id)}>{item.name}{item.price} {item.currency} </motion.h5>
+                                    <motion.div onClick={() => handleCartClick(item.id)}>
+                                        <FontAwesomeIcon className="cart-icon" icon={faCartPlus}></FontAwesomeIcon>
+                                    </motion.div>
+                                </motion.div>
+                            </motion.div>
                         </motion.div>
-                        <motion.p className="item-desc">{item.desc}</motion.p>
-                    </motion.div>
-                </motion.div>
-            ))}
-    </>
-);
+                    ))}
+        </>
+    );
 };
 export default MenuAppetisers;

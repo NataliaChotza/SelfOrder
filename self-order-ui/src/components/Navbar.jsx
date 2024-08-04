@@ -3,10 +3,16 @@ import Buttons from "./Buttons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import React from "react";
 import {faCartShopping} from '@fortawesome/free-solid-svg-icons';
+import {useNavigate} from "react-router-dom";
 const Navbar = ({ setAll, setDrinksNoAlk, setMainDish, setSweets,setAppetisers }) => {
     const breakpoints = [576, 768, 992, 1200];
 
+    const navigate = useNavigate();
     const mq = breakpoints.map((bp) => `@media (max-width: ${bp}px)`);
+
+    const handleShowCart = (cartId) => {
+        navigate(`/api/cart/${cartId}`)
+    }
 
     return (
         <div
@@ -36,11 +42,12 @@ const Navbar = ({ setAll, setDrinksNoAlk, setMainDish, setSweets,setAppetisers }
             bottom: 10px;
             font-size: 3rem;
           }
+          .cart-icon {
+            margin-left: 90%;
+          }
 
           .dwu {
             grid-row: 1;
-            grid-column: 1/4;
-            font-size: 0.9rem;
             position: relative;
             top: 20px;
             font-weight: 400;
@@ -58,7 +65,7 @@ const Navbar = ({ setAll, setDrinksNoAlk, setMainDish, setSweets,setAppetisers }
                 setAppetisers={setAppetisers}
                 setSweets={setSweets}
             />
-            <FontAwesomeIcon className="dwu cart-icon" icon={faCartShopping}></FontAwesomeIcon>
+            <FontAwesomeIcon className="dwu cart-icon" icon={faCartShopping} onClick={()=>handleShowCart("cart1")}></FontAwesomeIcon>
         </div>
     );
 };
