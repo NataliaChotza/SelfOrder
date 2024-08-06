@@ -18,6 +18,6 @@ public class ItemDto {
     private String quantity;
     private CategoryEnum category;
     private String currency;
-    private BigDecimal price;
+    private Double price;
 
 }

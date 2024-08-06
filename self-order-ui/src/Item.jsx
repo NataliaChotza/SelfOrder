@@ -44,7 +44,6 @@ const Item = () => {
 
     const handleShowCart = (cartId) => {
         navigator(`/api/cart/${cartId}`)
-
     }
 
 
@@ -90,7 +89,6 @@ const Item = () => {
                       }
 
                       body::-webkit-scrollbar-thumb {
-                        background-color: #5E1833; /* color of the scroll thumb */
                         border-radius: 20px; /* roundness of the scroll thumb */
                         border: 3px solid #F9E0D9; /* creates padding around scroll thumb */
                       }

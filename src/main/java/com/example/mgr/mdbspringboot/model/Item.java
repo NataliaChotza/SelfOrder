@@ -24,7 +24,7 @@ public class Item {
     @NotNull
     private String quantity;
     @NotNull
-    private BigDecimal price;
+    private Double price;
     @NotNull
     private String currency;
     @NotNull

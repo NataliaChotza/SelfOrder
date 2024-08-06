@@ -5,6 +5,7 @@ import com.example.mgr.mdbspringboot.model.PaymentType;
 import lombok.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Data
 @Builder
@@ -14,7 +15,9 @@ import java.util.List;
 @Setter
 public class CartDto {
     private String id;
+    private Map<String,Integer> itemsQuantity;
     private List<Item> items;
+    private String price;
     private PaymentType paymentType;
 
 }

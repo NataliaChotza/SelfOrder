@@ -8,6 +8,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
+import java.util.Map;
 
 @Document("cart")
 @Data
@@ -17,6 +18,7 @@ import java.util.List;
 public class Cart {
     @Id
     private String id;
-    private List<Item> items;
+    private Map<String,Integer> itemsQuantity;
+    private String price;
     private PaymentType paymentType;
 }

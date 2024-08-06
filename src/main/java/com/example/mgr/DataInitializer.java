@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 @Component
 public class DataInitializer implements CommandLineRunner {
@@ -30,7 +31,7 @@ public class DataInitializer implements CommandLineRunner {
                 .name("Backed Chicken")
                 .description("Chicken backed in the oven")
                 .quantity("100g")
-                .price(new BigDecimal("35.99"))
+                .price(35.99)
                 .currency(PriceEnum.PLN.getValue())
                 .category(CategoryEnum.MAIN_DISH)
                 .build();
@@ -40,18 +41,18 @@ public class DataInitializer implements CommandLineRunner {
                 .name("Bread")
                 .description("Freshly backed bread")
                 .quantity("100g")
-                .price(new BigDecimal("14.00"))
+                .price(14.00)
                 .currency(PriceEnum.PLN.getValue())
                 .category(CategoryEnum.APPETISER).build();
         Item item3 = Item.builder().id("item_3").name("Water")
                 .description("water")
                 .quantity("500")
-                .price(new BigDecimal("6.99"))
+                .price(6.99)
                 .currency(PriceEnum.PLN.getValue())
                 .category(CategoryEnum.DRINKS_NO_ALK).build();
 
 
-        Cart cart = Cart.builder().id("cart1").items(new ArrayList<>()).build();
+        Cart cart = Cart.builder().id("cart1").itemsQuantity(new HashMap<>()).build();
         cartRepository.save(cart);
 
         menuItemRepo.save(item1);

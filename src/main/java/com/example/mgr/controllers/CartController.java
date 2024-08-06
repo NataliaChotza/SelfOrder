@@ -1,8 +1,6 @@
 package com.example.mgr.controllers;
 
 import com.example.mgr.dto.CartDto;
-import com.example.mgr.dto.ItemDto;
-import com.example.mgr.mdbspringboot.model.Cart;
 import com.example.mgr.mdbspringboot.model.Item;
 import com.example.mgr.service.CartService;
 import org.slf4j.Logger;
@@ -12,7 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
@@ -41,17 +39,19 @@ public class CartController {
     }
 
     @GetMapping("/cart/{cartId}/items")
-    public ResponseEntity<List<Item>> getCartItems(@PathVariable String cartId){
+    public ResponseEntity<Map<String,Integer>> getCartItems(@PathVariable String cartId) {
         CartDto cart = cartService.getCart(cartId);
         if (cart != null) {
-            List<Item> items = cart.getItems();
-            if(items.isEmpty()){
+            Map<String,Integer> items = cart.getItemsQuantity();
+            return ResponseEntity.ok(items);
+            } else
+                logger.info("No cart with this id");
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
-            else
-                return ResponseEntity.ok(items);
-        }else
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-
+    }
+    @PatchMapping("/cart/{cartId}/{itemId}")
+    public ResponseEntity updateCart(@PathVariable String itemId, @PathVariable String cartId){
+        cartService.saveItem(itemId,cartId);
+        logger.info("Saved item to cart");
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
