@@ -1,6 +1,7 @@
 package com.example.mgr.controllers;
 
 import com.example.mgr.dto.CartDto;
+import com.example.mgr.mdbspringboot.model.Cart;
 import com.example.mgr.mdbspringboot.model.Item;
 import com.example.mgr.service.CartService;
 import org.slf4j.Logger;
@@ -48,10 +49,10 @@ public class CartController {
                 logger.info("No cart with this id");
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
-    @PatchMapping("/cart/{cartId}/{itemId}")
-    public ResponseEntity updateCart(@PathVariable String itemId, @PathVariable String cartId){
-        cartService.saveItem(itemId,cartId);
-        logger.info("Saved item to cart");
+    @PatchMapping("/cart/{cartId}")
+    public ResponseEntity updateCart(@RequestBody Cart cart){
+        cartService.saveCart(cart);
+        logger.info("Updated cart");
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

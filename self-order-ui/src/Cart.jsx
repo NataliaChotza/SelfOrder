@@ -19,12 +19,48 @@ import {
     MDBTableBody,
     MDBTableHead,
 } from "mdb-react-ui-kit";
+import eventHandler from "bootstrap/js/src/dom/event-handler";
+import {Button} from "reactstrap";
+
 
 const Cart =()=>{
     const {cartId} = useParams();
-    const navigate = useNavigate();
     const [cart,setCart]= useState(null)
-    const [cartExist,setCartExist] = useState(false)
+    const [itemQuantities,setItemQuantities] = useState(new Map())
+
+
+    const handleQuantityChange = (e, itemName) => {
+        const newQuantity = parseInt(e.target.value);
+        setItemQuantities(prevQuantities => new Map(prevQuantities).set(itemName, newQuantity));
+    };
+    const incrementQuantity = (itemName) => {
+        setItemQuantities(prevQuantities => {
+            const newQuantities = new Map(prevQuantities);
+            newQuantities.set(itemName, (newQuantities.get(itemName) || 0) + 1);
+            return newQuantities;
+        });
+    };
+
+    const decrementQuantity = (itemName) => {
+        setItemQuantities(prevQuantities => {
+            const newQuantities = new Map(prevQuantities);
+            const currentQuantity = newQuantities.get(itemName) || 1;
+            newQuantities.set(itemName, Math.max(currentQuantity - 1, 1));// Prevent negative quantities
+            return newQuantities;
+        });
+    };
+    const removeItem =(itemName)=>{
+        setCart(prevCart=>{
+            const updatedItems = prevCart.items.filter(item=>item.name!==itemName);
+            const updatedItemQuantity={...prevCart.itemsQuantity};
+            delete updatedItemQuantity[itemName];
+            return {
+                ...prevCart,
+                items:updatedItems,
+                itemQuantities:updatedItemQuantity
+            };
+        });
+    };
 
 
     useEffect(() => {
@@ -33,7 +69,8 @@ const Cart =()=>{
             .then(response => {
                 console.log(`Items fetched for cart: ${cartId}`, response.data);
                 setCart(response.data);
-                setCartExist(true)
+                const initialQuantities = new Map(Object.entries(response.data.itemsQuantity))
+                setItemQuantities(initialQuantities)
             })
             .catch(error => {
                 console.error(`Error while getting item for cart: ${cartId}`, error);
@@ -42,18 +79,14 @@ const Cart =()=>{
     }, [cartId]);
 
 
-    const changeQuantity =(itemName,newQuantity)=>{
-        //zrobić patch w backend do cart?
-        setCart(prevCart => {
-            const updatedItemsQuantity = { ...prevCart.itemsQuantity, [itemName]: newQuantity };
-            return {
-                ...prevCart,
-                itemsQuantity: updatedItemsQuantity
-            };
-        });
-        axios.patch(`http://localhost:8080/api/cart/${cartId}/`)
+    const checkOutButton =async (cartId) => {
+        await axios.patch(`http://localhost:8080/api/cart/${cartId}`, cart, {
+            headers: {
+                'Content-Type': "application/json"
+            }
+        })
             .then(response => {
-                console.log(`Items changed in cart: ${cartId}`, response.data);
+                console.log(`cart updated: ${cartId}`, response.data);
             })
             .catch(error => {
                 console.error(`Error while changing in cart: ${cartId}`, error);
@@ -62,7 +95,7 @@ const Cart =()=>{
 
     }
 
-    if (!cartExist) return <div className="body">Loading</div>
+    if (!cart) return <div className="body">Loading</div>
 
     const itemPriceMap = cart.items.reduce((acc, item) => {
         acc[item.name] = item.price;
@@ -70,7 +103,7 @@ const Cart =()=>{
     }, {});
 
     return(
-        <section className="h-100 h-custom ">
+        <section className="app-background h-100 h-custom ">
             <MDBContainer className="py-5 h-100">
                 <MDBRow className="justify-content-center align-items-center h-100">
                     <MDBCol>
@@ -82,10 +115,13 @@ const Cart =()=>{
                                     </th>
                                     <th scope="col">Quantity</th>
                                     <th scope="col">Price</th>
+                                    <th scope="col">Remove</th>
                                 </tr>
                             </MDBTableHead>
                             <MDBTableBody>
-                            {cart && Object.entries(cart.itemsQuantity).map(([itemName,quantity],index)=>{
+                            {cart && cart.items.map((item)=>{
+                                const itemName = item.name;
+                                const quantity = itemQuantities.get(itemName) || 1;
                                 const price = itemPriceMap[itemName]
                                 return(
                                 <tr>
@@ -105,20 +141,19 @@ const Cart =()=>{
                                     </th>
                                     <td className="align-middle">
                                         <div className="d-flex flex-row align-items-center">
-                                            <MDBBtn className="px-2" color="link">
-                                                <MDBIcon fas icon="minus"/>
+                                            <MDBBtn className="px-2" color="link" onClick={()=>decrementQuantity(itemName)}>
+                                                <MDBIcon fas icon="minus" />
                                             </MDBBtn>
 
                                             <MDBInput
-                                                min={0}
+                                                min={1}
                                                 type="number"
-                                                onChange={(event)=>changeQuantity(itemName,Number(event.target.value))}
                                                 size="sm"
                                                 style={{width: "50px"}}
-                                                defaultValue={quantity}
+                                                value={quantity}
+                                                onChange={(e)=>handleQuantityChange(e,itemName)}
                                             />
-
-                                            <MDBBtn className="px-2" color="link">
+                                            <MDBBtn className="px-2" color="link" onClick={()=>incrementQuantity(itemName)}>
                                                 <MDBIcon fas icon="plus"/>
                                             </MDBBtn>
                                         </div>
@@ -128,6 +163,13 @@ const Cart =()=>{
                                             {price * quantity}
                                         </p>
                                     </td>
+                                    <td className="align-middle">
+                                        <Button onClick={() => removeItem(itemName)} style={{ color:"black",backgroundColor:"lightblue", fontSize: "40px"}}>
+                                            <FontAwesomeIcon icon={"trash-can"}></FontAwesomeIcon>
+                                        </Button>
+
+                                    </td>
+
                                 </tr>
                 )})}
                             </MDBTableBody>
@@ -222,16 +264,16 @@ const Cart =()=>{
                                                 label="Card Number"
                                                 placeholder="1111 2222 3333 4444"
                                                 size="lg"
-                                                minlength="19"
-                                                maxlength="19"
+                                                minLength="19"
+                                                maxLength="19"
                                             />
                                             <MDBInput
                                                 className="mb-4 mb-xl-5"
                                                 label="Cvv"
                                                 placeholder="&#9679;&#9679;&#9679;"
                                                 size="lg"
-                                                minlength="3"
-                                                maxlength="3"
+                                                minLength="3"
+                                                maxLength="3"
                                                 type="password"
                                             />
                                         </MDBCol>
@@ -256,7 +298,7 @@ const Cart =()=>{
                                         <p className="mb-2">{cart.price}</p>
                                     </div>
 
-                                    <MDBBtn block size="lg">
+                                    <MDBBtn block size="lg" onClick={()=>checkOutButton(cartId)}>
                                         <div className="d-flex justify-content-between">
                                             <span>Checkout</span>
                                             <span>{cart.price}</span>

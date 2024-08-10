@@ -1,4 +1,4 @@
-import { css, jsx } from "@emotion/react";
+import { css } from "@emotion/react";
 import Buttons from "./Buttons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import React from "react";
@@ -33,6 +33,8 @@ const Navbar = ({ setAll, setDrinksNoAlk, setMainDish, setSweets,setAppetisers }
           .Buttons {
             grid-row: 2;
             grid-column: 1/4;
+            border: none;
+            box-sizing:unset;
           }
 
           .logo {

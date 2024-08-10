@@ -1,4 +1,4 @@
-import {css, jsx} from "@emotion/react";
+import {css} from "@emotion/react";
 
 const Buttons = ({setAll, setDrinksNoAlk, setMainDish, setSweets, setAppetisers}) => {
     const breakpoints = [576, 768, 992, 1200];
@@ -13,11 +13,11 @@ const Buttons = ({setAll, setDrinksNoAlk, setMainDish, setSweets, setAppetisers}
 
               button {
                 margin: 0 2rem;
-                border: none;
                 padding: 10px;
                 cursor: pointer;
-                transition: 0.3s linear;
-                outline: none;
+                border: none;
+                box-sizing:unset;
+                
 
                 ${mq[2]} {
                   margin: 0 1rem;
@@ -33,7 +33,6 @@ const Buttons = ({setAll, setDrinksNoAlk, setMainDish, setSweets, setAppetisers}
                   display: block;
                   height: 2px;
                   width: 0;
-                  background: #24242a;
                   transition: width 0.3s ease-in;
                 }
 

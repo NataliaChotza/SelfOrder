@@ -1,11 +1,10 @@
 
-import {css, jsx, Global} from "@emotion/react";
+import {css, Global} from "@emotion/react";
 import React, {useEffect, useState} from 'react';
 import axios from 'axios';
 import './Menu.css';
 import Navbar from "./components/Navbar";
 import MenuItems from "./Menus/MenuItems";
-import {useNavigate} from "react-router-dom";
 
 const Menu = () => {
     const [items, setItems] = useState([]);
@@ -30,10 +29,8 @@ const Menu = () => {
         <div
             className="body"
             css={css`
-        background: #5E1833;
-        height: 100%;
-        padding: 70px 0;
-      `}
+              padding: 70px 0;
+            `}
         >
             <Navbar
                 setAll={setAll}

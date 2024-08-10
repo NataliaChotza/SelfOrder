@@ -66,6 +66,6 @@ public class CartService {
         List<Item> items = new ArrayList<>();
         cart.getItemsQuantity().keySet().forEach(name->items.add(itemRepository.findItemByName(name)));
         return items;
-
     }
+
 }
