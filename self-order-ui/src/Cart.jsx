@@ -1,10 +1,6 @@
 import React, {useEffect, useState} from "react"
 import {useNavigate, useParams} from 'react-router-dom';
 import axios from "axios";
-import {motion} from "framer-motion";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCartPlus, faCartShopping} from "@fortawesome/free-solid-svg-icons";
-import {css, jsx, Global} from "@emotion/react";
 import {
     MDBBtn,
     MDBCard,
@@ -19,15 +15,16 @@ import {
     MDBTableBody,
     MDBTableHead,
 } from "mdb-react-ui-kit";
-import eventHandler from "bootstrap/js/src/dom/event-handler";
+
 import {Button} from "reactstrap";
+import {PriceFormater} from "./helpers/PriceFormater";
+import {CurrencyFormater} from "./helpers/CurrencyFormater";
 
 
 const Cart =()=>{
     const {cartId} = useParams();
     const [cart,setCart]= useState(null)
     const [itemQuantities,setItemQuantities] = useState(new Map())
-
 
     const handleQuantityChange = (e, itemName) => {
         const newQuantity = parseInt(e.target.value);
@@ -48,20 +45,29 @@ const Cart =()=>{
             newQuantities.set(itemName, Math.max(currentQuantity - 1, 1));// Prevent negative quantities
             return newQuantities;
         });
+
     };
     const removeItem =(itemName)=>{
-        setCart(prevCart=>{
-            const updatedItems = prevCart.items.filter(item=>item.name!==itemName);
-            const updatedItemQuantity={...prevCart.itemsQuantity};
-            delete updatedItemQuantity[itemName];
+        setItemQuantities(prevQuantities => {
+            const newQuantities = new Map(prevQuantities);
+            newQuantities.delete(itemName);
+            return newQuantities;
+        });
+        setCart((prevCart)=>{
             return {
                 ...prevCart,
-                items:updatedItems,
-                itemQuantities:updatedItemQuantity
-            };
-        });
+                itemsQuantity:itemQuantities
+        }});
     };
 
+
+    const countCartPrice=()=>{
+        return Array.from(itemQuantities.entries()).reduce((sum, [item, quantity]) => {
+            const price = itemPriceMap[item] || 0; // Get the price, default to 0 if not found
+            return sum + (quantity * price)
+        }, 0);
+
+    }
 
     useEffect(() => {
         // eslint-disable-next-line no-template-curly-in-string
@@ -76,11 +82,16 @@ const Cart =()=>{
                 console.error(`Error while getting item for cart: ${cartId}`, error);
 
             });
-    }, [cartId]);
+    },[cartId]);
 
 
     const checkOutButton =async (cartId) => {
-        await axios.patch(`http://localhost:8080/api/cart/${cartId}`, cart, {
+        const updatedCart = {
+            ...cart,
+            itemsQuantity: Object.fromEntries(itemQuantities),
+            price:countCartPrice()
+        };
+        await axios.put(`http://localhost:8080/api/cart/${cartId}`, updatedCart, {
             headers: {
                 'Content-Type': "application/json"
             }
@@ -98,6 +109,7 @@ const Cart =()=>{
     if (!cart) return <div className="body">Loading</div>
 
     const itemPriceMap = cart.items.reduce((acc, item) => {
+
         acc[item.name] = item.price;
         return acc;
     }, {});
@@ -160,12 +172,11 @@ const Cart =()=>{
                                     </td>
                                     <td className="align-middle">
                                         <p className="mb-0" style={{fontWeight: "500"}}>
-                                            {price * quantity}
+                                            {CurrencyFormater(PriceFormater(quantity*price),false)}
                                         </p>
                                     </td>
                                     <td className="align-middle">
                                         <Button onClick={() => removeItem(itemName)} style={{ color:"black",backgroundColor:"lightblue", fontSize: "40px"}}>
-                                            <FontAwesomeIcon icon={"trash-can"}></FontAwesomeIcon>
                                         </Button>
 
                                     </td>
@@ -280,28 +291,9 @@ const Cart =()=>{
                                     </MDBRow>
                                 </MDBCol>
                                 <MDBCol lg="4" xl="3">
-                                    <div
-                                        className="d-flex justify-content-between"
-                                        style={{fontWeight: "500"}}
-                                    >
-                                        <p className="mb-2">Subtotal</p>
-                                        <p className="mb-2">{cart.price}</p>
-                                    </div>
-
-                                    <hr className="my-4"/>
-
-                                    <div
-                                        className="d-flex justify-content-between mb-4"
-                                        style={{fontWeight: "500"}}
-                                    >
-                                        <p className="mb-2">Total (tax included)</p>
-                                        <p className="mb-2">{cart.price}</p>
-                                    </div>
-
                                     <MDBBtn block size="lg" onClick={()=>checkOutButton(cartId)}>
                                         <div className="d-flex justify-content-between">
-                                            <span>Checkout</span>
-                                            <span>{cart.price}</span>
+                                            <span>Checkout {countCartPrice()}</span>
                                         </div>
                                     </MDBBtn>
                                 </MDBCol>

@@ -49,7 +49,7 @@ public class CartController {
                 logger.info("No cart with this id");
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
-    @PatchMapping("/cart/{cartId}")
+    @PutMapping("/cart/{cartId}")
     public ResponseEntity updateCart(@RequestBody Cart cart){
         cartService.saveCart(cart);
         logger.info("Updated cart");
