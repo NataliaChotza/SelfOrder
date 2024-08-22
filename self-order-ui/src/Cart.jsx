@@ -16,15 +16,24 @@ import {
     MDBTableHead,
 } from "mdb-react-ui-kit";
 
+
 import {Button} from "reactstrap";
 import {PriceFormater} from "./helpers/PriceFormater";
 import {CurrencyFormater} from "./helpers/CurrencyFormater";
+import {WarningAlert} from "./WarningAlert";
 
-
-const Cart =()=>{
+const PaymentMethods = {
+    CARD: 'card',
+    BLIK: 'blik',
+    CASH: 'cash',
+};
+const Cart = () => {
     const {cartId} = useParams();
-    const [cart,setCart]= useState(null)
-    const [itemQuantities,setItemQuantities] = useState(new Map())
+    const [cart, setCart] = useState(null)
+    const [itemQuantities, setItemQuantities] = useState(new Map())
+    const [blikPayment, setBlikPayment] = useState(false);
+    const [cashPayment, setCashPayment] = useState(true);
+    const [cardPayment, setCardPayment] = useState(false);
 
     const handleQuantityChange = (e, itemName) => {
         const newQuantity = parseInt(e.target.value);
@@ -47,30 +56,33 @@ const Cart =()=>{
         });
 
     };
-    const removeItem =(itemName)=>{
+    const removeItem = (itemName) => {
         setItemQuantities(prevQuantities => {
             const newQuantities = new Map(prevQuantities);
             newQuantities.delete(itemName);
             return newQuantities;
         });
-        setCart((prevCart)=>{
+        let newItems = cart.items.filter(item => item.name !== itemName)
+
+        setCart((prevCart) => {
             return {
                 ...prevCart,
-                itemsQuantity:itemQuantities
-        }});
+                items: newItems,
+                itemsQuantity: itemQuantities
+            }
+        });
+        console.log(newItems)
+
     };
 
-
-    const countCartPrice=()=>{
+    const countCartPrice = () => {
         return Array.from(itemQuantities.entries()).reduce((sum, [item, quantity]) => {
             const price = itemPriceMap[item] || 0; // Get the price, default to 0 if not found
             return sum + (quantity * price)
         }, 0);
-
     }
 
     useEffect(() => {
-        // eslint-disable-next-line no-template-curly-in-string
         axios.get(`http://localhost:8080/api/cart/${cartId}`)
             .then(response => {
                 console.log(`Items fetched for cart: ${cartId}`, response.data);
@@ -82,30 +94,48 @@ const Cart =()=>{
                 console.error(`Error while getting item for cart: ${cartId}`, error);
 
             });
-    },[cartId]);
+    }, [cartId]);
 
+    const handleChangePaymentType = (type) => {
+        if (type === PaymentMethods.BLIK) {
+            setBlikPayment(true)
+            setCashPayment(false)
+            setCardPayment(false)
+        } else if (type === PaymentMethods.CARD) {
+            setCardPayment(true)
+            setCashPayment(false)
+            setBlikPayment(false)
+        } else {
+            setCashPayment(true)
+            setBlikPayment(false)
+            setCardPayment(false)
+        }
+    }
 
-    const checkOutButton =async (cartId) => {
+    const checkOutButton = async (cartId) => {
         const updatedCart = {
             ...cart,
             itemsQuantity: Object.fromEntries(itemQuantities),
-            price:countCartPrice()
+            price: countCartPrice()
         };
-        await axios.put(`http://localhost:8080/api/cart/${cartId}`, updatedCart, {
-            headers: {
-                'Content-Type': "application/json"
-            }
-        })
-            .then(response => {
-                console.log(`cart updated: ${cartId}`, response.data);
+        if (updatedCart.price === 0) {
+            console.log("warning")
+
+        } else {
+            await axios.put(`http://localhost:8080/api/cart/${cartId}`, updatedCart, {
+                headers: {
+                    'Content-Type': "application/json"
+                }
             })
-            .catch(error => {
-                console.error(`Error while changing in cart: ${cartId}`, error);
+                .then(response => {
+                    console.log(`cart updated: ${cartId}`, response.data);
+                })
+                .catch(error => {
+                    console.error(`Error while changing in cart: ${cartId}`, error);
 
-            });
-
+                });
+        }
     }
-
     if (!cart) return <div className="body">Loading</div>
 
     const itemPriceMap = cart.items.reduce((acc, item) => {
@@ -114,7 +144,7 @@ const Cart =()=>{
         return acc;
     }, {});
 
-    return(
+    return (
         <section className="app-background h-100 h-custom ">
             <MDBContainer className="py-5 h-100">
                 <MDBRow className="justify-content-center align-items-center h-100">
@@ -131,58 +161,63 @@ const Cart =()=>{
                                 </tr>
                             </MDBTableHead>
                             <MDBTableBody>
-                            {cart && cart.items.map((item)=>{
-                                const itemName = item.name;
-                                const quantity = itemQuantities.get(itemName) || 1;
-                                const price = itemPriceMap[itemName]
-                                return(
-                                <tr>
-                                    <th scope="row">
-                                        <div className="d-flex align-items-center">
-                                            <img
-                                                src="https://i.imgur.com/2DsA49b.webp"
-                                                fluid
-                                                className="rounded-3"
-                                                style={{width: "90px"}}
-                                                alt="Book"
-                                            />
-                                            <div className="flex-column ms-4">
-                                                <p className="mb-2">{itemName}</p>
-                                            </div>
-                                        </div>
-                                    </th>
-                                    <td className="align-middle">
-                                        <div className="d-flex flex-row align-items-center">
-                                            <MDBBtn className="px-2" color="link" onClick={()=>decrementQuantity(itemName)}>
-                                                <MDBIcon fas icon="minus" />
-                                            </MDBBtn>
+                                {cart && cart.items.map((item) => {
+                                    const itemName = item.name;
+                                    const quantity = itemQuantities.get(itemName) || 1;
+                                    const price = itemPriceMap[itemName]
+                                    return (
+                                        <tr>
+                                            <th scope="row">
+                                                <div className="d-flex align-items-center">
+                                                    <img
+                                                        src="https://i.imgur.com/2DsA49b.webp"
+                                                        fluid
+                                                        className="rounded-3"
+                                                        style={{width: "90px"}}
+                                                        alt="Book"
+                                                    />
+                                                    <div className="flex-column ms-4">
+                                                        <p className="mb-2">{itemName}</p>
+                                                    </div>
+                                                </div>
+                                            </th>
+                                            <td className="align-middle">
+                                                <div className="d-flex flex-row align-items-center">
+                                                    <MDBBtn className="px-2" color="link"
+                                                            onClick={() => decrementQuantity(itemName)}>
+                                                        <MDBIcon fas icon="minus"/>
+                                                    </MDBBtn>
 
-                                            <MDBInput
-                                                min={1}
-                                                type="number"
-                                                size="sm"
-                                                style={{width: "50px"}}
-                                                value={quantity}
-                                                onChange={(e)=>handleQuantityChange(e,itemName)}
-                                            />
-                                            <MDBBtn className="px-2" color="link" onClick={()=>incrementQuantity(itemName)}>
-                                                <MDBIcon fas icon="plus"/>
-                                            </MDBBtn>
-                                        </div>
-                                    </td>
-                                    <td className="align-middle">
-                                        <p className="mb-0" style={{fontWeight: "500"}}>
-                                            {CurrencyFormater(PriceFormater(quantity*price),false)}
-                                        </p>
-                                    </td>
-                                    <td className="align-middle">
-                                        <Button onClick={() => removeItem(itemName)} style={{ color:"black",backgroundColor:"lightblue", fontSize: "40px"}}>
-                                        </Button>
+                                                    <MDBInput
+                                                        min={1}
+                                                        type="number"
+                                                        size="sm"
+                                                        style={{width: "50px"}}
+                                                        value={quantity}
+                                                        onChange={(e) => handleQuantityChange(e, itemName)}
+                                                    />
+                                                    <MDBBtn className="px-2" color="link"
+                                                            onClick={() => incrementQuantity(itemName)}>
+                                                        <MDBIcon fas icon="plus"/>
+                                                    </MDBBtn>
+                                                </div>
+                                            </td>
+                                            <td className="align-middle">
+                                                <p className="mb-0" style={{fontWeight: "500"}}>
+                                                    {CurrencyFormater(PriceFormater(quantity * price), false)}
+                                                </p>
+                                            </td>
+                                            <td className="align-middle">
+                                                <Button onClick={() => removeItem(itemName)} style={{
+                                                    color: "black",
+                                                    fontSize: "40px"
+                                                }}>
+                                                </Button>
+                                            </td>
 
-                                    </td>
-
-                                </tr>
-                )})}
+                                        </tr>
+                                    )
+                                })}
                             </MDBTableBody>
                         </MDBTable>
                     </MDBCol>
@@ -196,10 +231,11 @@ const Cart =()=>{
                                     <form>
                                         <div className="d-flex flex-row pb-3">
                                             <div className="d-flex align-items-center pe-2">
-                                                <MDBRadio
+                                                <input
                                                     type="radio"
-                                                    name="radio1"
-                                                    checked
+                                                    name="radio_card"
+                                                    onClick={() => handleChangePaymentType(PaymentMethods.CARD)}
+                                                    checked={cardPayment}
                                                     value=""
                                                     aria-label="..."
                                                 />
@@ -210,18 +246,17 @@ const Cart =()=>{
                                                         fab
                                                         icon="cc-mastercard fa-2x text-dark pe-2"
                                                     />
-                                                    Credit Card
+                                                    Card
                                                 </p>
                                             </div>
                                         </div>
                                         <div className="d-flex flex-row pb-3">
                                             <div className="d-flex align-items-center pe-2">
-                                                <MDBRadio
+                                                <input
                                                     type="radio"
-                                                    name="radio1"
-                                                    checked
-                                                    value=""
-                                                    aria-label="..."
+                                                    name="radio_cash"
+                                                    checked={cashPayment}
+                                                    onClick={() => handleChangePaymentType(PaymentMethods.CASH)}
                                                 />
                                             </div>
                                             <div className="rounded border w-100 p-3">
@@ -233,69 +268,41 @@ const Cart =()=>{
                                         </div>
                                         <div className="d-flex flex-row pb-3">
                                             <div className="d-flex align-items-center pe-2">
-                                                <MDBRadio
+                                                <input
                                                     type="radio"
-                                                    name="radio1"
-                                                    checked
-                                                    value=""
-                                                    aria-label="..."
+                                                    name="radio_blik"
+                                                    checked={blikPayment}
+                                                    onClick={() => handleChangePaymentType(PaymentMethods.BLIK)}
                                                 />
                                             </div>
                                             <div className="rounded border w-100 p-3">
                                                 <p className="d-flex align-items-center mb-0">
                                                     <MDBIcon fab icon="cc-paypal fa-2x text-dark pe-2"/>
-                                                    PayPal
+                                                    Blik
                                                 </p>
                                             </div>
                                         </div>
                                     </form>
                                 </MDBCol>
-                                <MDBCol md="6" lg="4" xl="6">
-                                    <MDBRow>
-                                        <MDBCol size="10" xl="6">
-                                            <MDBInput
-                                                className="mb-4 mb-xl-5"
-                                                label="Name on card"
-                                                placeholder="John Smiths"
-                                                size="lg"
-                                            />
-                                            <MDBInput
-                                                className="mb-4 mb-xl-5"
-                                                label="Expiration"
-                                                placeholder="MM/YY"
-                                                size="lg"
-                                                maxLength={7}
-                                                minLength={7}
-                                            />
-                                        </MDBCol>
-
-                                        <MDBCol size="10" xl="6">
-                                            <MDBInput
-                                                className="mb-4 mb-xl-5"
-                                                label="Card Number"
-                                                placeholder="1111 2222 3333 4444"
-                                                size="lg"
-                                                minLength="19"
-                                                maxLength="19"
-                                            />
-                                            <MDBInput
-                                                className="mb-4 mb-xl-5"
-                                                label="Cvv"
-                                                placeholder="&#9679;&#9679;&#9679;"
-                                                size="lg"
-                                                minLength="3"
-                                                maxLength="3"
-                                                type="password"
-                                            />
-                                        </MDBCol>
-                                    </MDBRow>
-                                </MDBCol>
+                                {blikPayment &&
+                                    <MDBCol md="6" lg="4" xl="6">
+                                        <MDBRow>
+                                            <MDBCol size="10" xl="6">
+                                                <MDBInput
+                                                    className="mb-4 mb-xl-5"
+                                                    placeholder="BLIK CODE"
+                                                    size="lg"
+                                                />
+                                            </MDBCol>
+                                        </MDBRow>
+                                    </MDBCol>
+                                }
                                 <MDBCol lg="4" xl="3">
-                                    <MDBBtn block size="lg" onClick={()=>checkOutButton(cartId)}>
-                                        <div className="d-flex justify-content-between">
+                                    <div className=" justify-content-between">
+                                        <MDBBtn block size="lg" onClick={() => checkOutButton(cartId)}>
                                             <span>Checkout {countCartPrice()}</span>
-                                        </div>
-                                    </MDBBtn>
+                                        </MDBBtn>
+                                    </div>
                                 </MDBCol>
                             </MDBRow>
                         </MDBCardBody>

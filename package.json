@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "@xstate/react": "^4.1.1",
+    "mdbreact": "^5.2.0",
+    "react-bootstrap": "^2.10.4",
+    "react-popup-alert": "^2.0.0",
+    "xstate": "^5.17.4"
+  }
+}
