@@ -37,7 +37,7 @@ const MenuItems = ({items, all, drinksNoAlk, mainDish, sweets, appetisers}) => {
 
               margin-top: 30px;
               padding: 40px 20px;
-              background: #F9E0D9;
+              background: #9A616D;
               border-radius: 50px;
               box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
               transition: transform 0.3s, box-shadow 0.3s;

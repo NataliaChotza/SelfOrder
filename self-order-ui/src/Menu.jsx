@@ -79,7 +79,7 @@ const Menu = () => {
                   }
 
                   body {
-                    background: #F9E0D9;
+                    background: #9A616D;
                     justify-content: center;
                     text-align: center;
                   }

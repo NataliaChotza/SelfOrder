@@ -85,7 +85,7 @@ const Item = () => {
                       }
 
                       body::-webkit-scrollbar-track {
-                        background: #F9E0D9; /* color of the tracking area */
+                        background: #9A616D; /* color of the tracking area */
                       }
 
                       body::-webkit-scrollbar-thumb {
@@ -94,7 +94,7 @@ const Item = () => {
                       }
 
                       body {
-                        background: #F9E0D9;
+                        background: #9A616D;
                       }
 
                       .container {
@@ -104,7 +104,7 @@ const Item = () => {
 
                       .description-box {
                         display: flex;
-                        background: #F9E0D9;
+                        background: #9A616D;
                         font-size: 1.2em;
                         color: #000000;
                         margin: 30px;
