@@ -3,10 +3,13 @@ package com.example.mgr.mdbspringboot.model;
 import lombok.Getter;
 
 @Getter
-public enum PaymentType {
-    CARD("karta"),CASH("gotówka"),BLIK("blik");
+public enum TableStatus {
 
-    PaymentType(String value){
+    OCCUPIED("zajęty"),
+    RESERVED("zarezerwowany"),
+    FREE("wolny");
+
+    TableStatus(String value){
         this.value = value;
     }
     private final String value;

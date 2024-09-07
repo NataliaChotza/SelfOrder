@@ -7,18 +7,19 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.Map;
+import java.util.List;
 
-@Document("cart")
+@Document("table")
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Cart {
+public class Table {
+
     @Id
-    private String id;
-    private Map<String,Integer> itemsQuantity;
+    private String tableNumber;
+    private String capacity;
+    private List<Cart> carts;
     private String price;
-    private String paymentType;
     private String status;
 }

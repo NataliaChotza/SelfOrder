@@ -1,19 +1,17 @@
 package com.example.mgr;
 
-import com.example.mgr.mdbspringboot.model.Cart;
-import com.example.mgr.mdbspringboot.model.CategoryEnum;
-import com.example.mgr.mdbspringboot.model.Item;
+import com.example.mgr.mdbspringboot.model.*;
 import com.example.mgr.mdbsrping.repository.CartRepository;
 import com.example.mgr.mdbsrping.repository.ItemRepository;
+import com.example.mgr.mdbsrping.repository.TableRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 @Component
 public class DataInitializer implements CommandLineRunner {
@@ -22,6 +20,8 @@ public class DataInitializer implements CommandLineRunner {
     private ItemRepository menuItemRepo;
     @Autowired
     private CartRepository cartRepository;
+    @Autowired
+    private TableRepository tableRepository;
 
     public void createItems() {
         logger.info("Initializing data...");
@@ -52,7 +52,19 @@ public class DataInitializer implements CommandLineRunner {
                 .category(CategoryEnum.DRINKS_NO_ALK).build();
 
 
-        Cart cart = Cart.builder().id("cart1").itemsQuantity(new HashMap<>()).build();
+        Cart cart = Cart.builder().id("cart1")
+                .status(CartStatus.UNPAID.getValue())
+                .paymentType(PaymentType.CARD.getValue())
+                .itemsQuantity(new HashMap<>()).build();
+
+        Table table = Table.builder()
+                .tableNumber("TN1")
+                .status(TableStatus.OCCUPIED.getValue())
+                .carts(List.of(cart))
+                .capacity("2")
+                .build();
+
+        tableRepository.save(table);
         cartRepository.save(cart);
 
         menuItemRepo.save(item1);

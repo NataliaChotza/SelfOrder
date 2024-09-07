@@ -59,7 +59,7 @@ public class CartService {
     }
 
     private CartDto mapToDto(Cart cart) {
-        return CartDto.builder().id(cart.getId()).items(getItemsForCart(cart)).itemsQuantity(cart.getItemsQuantity()).price(cart.getPrice()).paymentType(cart.getPaymentType()).build();
+        return CartDto.builder().id(cart.getId()).items(getItemsForCart(cart)).itemsQuantity(cart.getItemsQuantity()).price(cart.getPrice()).paymentType(cart.getPaymentType()).status(cart.getStatus()).build();
     }
 
     private List<Item> getItemsForCart(Cart cart) {
